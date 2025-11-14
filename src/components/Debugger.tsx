@@ -1,49 +1,60 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React, { useEffect, useMemo, useState } from "react";
 import { Layout, Code, Card, Button, Input } from "@stellar/design-system";
 import { Client } from "@stellar/stellar-sdk/contract";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { ContractForm } from "../debug/components/ContractForm.tsx";
-import { Box } from "../components/layout/Box.tsx";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { useContracts } from "../debug/hooks/useContracts.ts";
+import { Box } from "./layout/Box.tsx";
+import { useContracts, type ContractMap } from "../debug/hooks/useContracts.ts";
 import RenderContractMetadata from "../debug/components/RenderContractMetadata.tsx";
 
 const Debugger: React.FC = () => {
   const { data, isLoading } = useContracts();
-  const contractMap = data?.loadedContracts ?? {};
-  const failedContracts = data?.failed ?? {};
-  const navigate = useNavigate();
+  const mutableContracts = data?.loadedContracts;
+  const mutableFailures = data?.failed;
+  const contractMap = useMemo<ContractMap>(
+    () => mutableContracts ?? {},
+    [mutableContracts],
+  );
+  const failedContracts = useMemo<Record<string, string>>(
+    () => mutableFailures ?? {},
+    [mutableFailures],
+  );
+  const router = useRouter();
+  const params = useParams<{ contractName?: string }>();
+  const activeContractName =
+    typeof params?.contractName === "string" ? params.contractName : undefined;
 
   const [selectedContract, setSelectedContract] = useState<string>("");
   const [isDetailExpanded, setIsDetailExpanded] = useState(false);
-  const { contractName } = useParams<{ contractName?: string }>();
 
-  const contractKeys = Array.from(
-    new Set([...Object.keys(contractMap), ...Object.keys(failedContracts)]),
+  const contractKeys = useMemo(
+    () =>
+      Array.from(
+        new Set([...Object.keys(contractMap), ...Object.keys(failedContracts)]),
+      ),
+    [contractMap, failedContracts],
   );
-  useEffect(() => {
-    if (!isLoading && contractKeys.length > 0) {
-      if (contractName && contractKeys.includes(contractName)) {
-        setSelectedContract(contractName);
-      } else {
-        setSelectedContract(contractKeys[0]);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contractName, isLoading, contractKeys.join(",")]);
 
   useEffect(() => {
-    if (!isLoading && contractKeys.length > 0) {
-      if (contractName && contractKeys.includes(contractName)) {
-        setSelectedContract(contractName);
-      } else if (!contractName) {
-        // Redirect to the first contract if no contractName in URL
-        void navigate(`/debug/${contractKeys[0]}`, { replace: true });
-      } else {
-        setSelectedContract(contractKeys[0]);
-      }
+    if (isLoading || contractKeys.length === 0) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contractName, isLoading, contractKeys.join(",")]);
+
+    if (activeContractName && contractKeys.includes(activeContractName)) {
+      setSelectedContract(activeContractName);
+      return;
+    }
+
+    const fallbackContract = contractKeys[0];
+    setSelectedContract(fallbackContract);
+
+    if (!activeContractName) {
+      void router.replace(`/debug/${fallbackContract}`);
+    }
+  }, [activeContractName, contractKeys, isLoading, router]);
 
   if (isLoading) {
     return (
@@ -105,21 +116,22 @@ const Debugger: React.FC = () => {
             flexWrap: "wrap",
           }}
         >
-          {contractKeys.map((key) => (
-            <NavLink
-              key={key}
-              to={`/debug/${key}`}
-              style={{
-                textDecoration: "none",
-              }}
-            >
-              {({ isActive }) => (
+          {contractKeys.map((key) => {
+            const isActive = key === selectedContract;
+            return (
+              <Link
+                key={key}
+                href={`/debug/${key}`}
+                style={{
+                  textDecoration: "none",
+                }}
+              >
                 <Button variant={isActive ? "primary" : "tertiary"} size="sm">
                   {key}
                 </Button>
-              )}
-            </NavLink>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </Layout.Inset>
 
@@ -203,7 +215,7 @@ const Debugger: React.FC = () => {
                 </div>
               </div>
             </div>
-          </Layout.Inset>{" "}
+          </Layout.Inset>
         </>
       )}
     </Layout.Content>

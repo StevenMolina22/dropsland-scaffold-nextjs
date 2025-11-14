@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Notification as StellarNotification } from "@stellar/design-system";
-import "./NotificationProvider.css"; // Import CSS for sliding effect
+import styles from "./NotificationProvider.module.css";
 
 type NotificationType =
   | "primary"
@@ -60,11 +60,11 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <NotificationContext value={contextValue}>
       {children}
-      <div className="notification-container">
+      <div className={styles.notificationContainer}>
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`notification ${notification.isVisible ? "slide-in" : "slide-out"}`}
+            className={`${styles.notification} ${notification.isVisible ? styles.slideIn : styles.slideOut}`}
           >
             <StellarNotification
               title={notification.message}

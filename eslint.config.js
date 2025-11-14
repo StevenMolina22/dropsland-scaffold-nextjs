@@ -1,44 +1,58 @@
 import js from "@eslint/js";
 import globals from "globals";
-import reactDOM from "eslint-plugin-react-dom";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
 import reactX from "eslint-plugin-react-x";
 import tseslint from "typescript-eslint";
+import nextPlugin from "@next/eslint-plugin-next";
 import prettier from "eslint-config-prettier";
 import { globalIgnores } from "eslint/config";
 
 export default tseslint.config(
+  // 1. Files to ignore
   globalIgnores([
     "dist",
     "packages",
     "src/contracts/*",
     "!src/contracts/util.ts",
+    ".next",
+    "next-env.d.ts",
   ]),
+
+  // 2. Base JS rules for all files
+  js.configs.recommended,
+
+  // 3. Config for TS/TSX files (with typed linting)
   {
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommendedTypeChecked,
-      reactDOM.configs.recommended,
-      reactHooks.configs["recommended-latest"],
-      reactRefresh.configs.vite,
-      reactX.configs["recommended-typescript"],
-      prettier,
-    ],
     files: ["**/*.{ts,tsx}"],
+    // Apply TS-aware and React/Next rules
+    extends: [
+      ...tseslint.configs.recommendedTypeChecked,
+      reactX.configs["recommended-typescript"],
+    ],
+    plugins: {
+      "@next/next": nextPlugin,
+    },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules,
+    },
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: { ...globals.browser },
+      // Point to your tsconfig for typed rules
       parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
+        project: ["./tsconfig.json"],
         tsconfigRoot: import.meta.dirname,
       },
     },
-    rules: {
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
+  },
+
+  // 4. Config for JS/MJS config files (NO typed linting)
+  {
+    files: ["**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: { ...globals.node },
     },
   },
+
+  // 5. Prettier (must be last)
+  prettier,
 );

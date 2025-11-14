@@ -1,4 +1,4 @@
-.notification-container {
+.notificationContainer {
   position: fixed;
   top: 10px;
   left: 50%;
@@ -16,11 +16,11 @@
   opacity: 1;
 }
 
-.notification.slide-in {
+.slideIn {
   transform: translateY(0);
 }
 
-.notification.slide-out {
+.slideOut {
   transform: translateY(-20px);
   opacity: 0;
 }
