@@ -1,4 +1,4 @@
-import { EmptyObj, Network } from "../types/types";
+import { EmptyObj, Network } from "@/debug/types/types";
 
 export const getNetworkHeaders = (
   network: Network | EmptyObj,

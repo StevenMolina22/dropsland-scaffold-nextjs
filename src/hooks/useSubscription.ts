@@ -49,41 +49,29 @@ export function useSubscription(
           paging[id].lastLedgerStart = latestLedgerState.sequence;
         }
 
-        // lastLedgerStart is now guaranteed to be a number
-        const lastLedger = paging[id].lastLedgerStart;
+        const startLedger = paging[id].lastLedgerStart ?? 0;
+        const endLedger = startLedger + 100;
 
-        const response = await server.getEvents(
-          paging[id].pagingToken
-            ? {
-                cursor: paging[id].pagingToken,
-                filters: [
-                  {
-                    contractIds: [contractId],
-                    topics: [[xdr.ScVal.scvSymbol(topic).toXDR("base64")]],
-                    type: "contract",
-                  },
-                ],
-                limit: 10,
-              }
-            : {
-                startLedger: lastLedger,
-                endLedger: lastLedger + 100,
-                filters: [
-                  {
-                    contractIds: [contractId],
-                    topics: [[xdr.ScVal.scvSymbol(topic).toXDR("base64")]],
-                    type: "contract",
-                  },
-                ],
-                limit: 10,
-              },
-        );
+        const requestParams: Api.GetEventsRequest = {
+          filters: [
+            {
+              contractIds: [contractId],
+              topics: [[xdr.ScVal.scvSymbol(topic).toXDR("base64")]],
+              type: "contract",
+            },
+          ],
+          limit: 10,
+          ...(paging[id].pagingToken
+            ? { cursor: paging[id].pagingToken }
+            : { startLedger, endLedger }),
+        };
 
-        paging[id].pagingToken = undefined;
+        const response = await server.getEvents(requestParams);
+
         if (response.latestLedger) {
           paging[id].lastLedgerStart = response.latestLedger;
         }
-        if (response.events && response.events.length > 0) {
+        if (response.events) {
           response.events.forEach((event) => {
             try {
               onEvent(event);
@@ -94,10 +82,9 @@ export function useSubscription(
               );
             }
           });
-          // Store the cursor from the response for pagination
-          if (response.cursor) {
-            paging[id].pagingToken = response.cursor;
-          }
+          // Clear pagingToken after processing events to start from latestLedger on next poll
+          // This ensures we don't miss any events while polling
+          paging[id].pagingToken = undefined;
         }
       } catch (error) {
         console.error("Poll Events: error: ", error);

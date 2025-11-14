@@ -4,7 +4,7 @@ import { JSONSchema7 } from "json-schema";
 import { get } from "lodash";
 import { Select } from "@stellar/design-system";
 
-import { Box } from "../../components/layout/Box";
+import { Box } from "@/components/layout/Box";
 
 import { jsonSchema } from "../util/jsonSchema";
 
@@ -12,7 +12,7 @@ import {
   AnyObject,
   JsonSchemaFormProps,
   SorobanInvokeValue,
-} from "../types/types";
+} from "@/debug/types/types";
 import { renderTupleType } from "./RenderTupleType";
 
 // oneOf is used for union and enum types
@@ -117,16 +117,14 @@ export const renderOneOf = ({
         {/* title is the tag */}
         <option value="">Select</option>
 
-        {schema.oneOf.map((oneOf, index) => {
+        {schema.oneOf.map((oneOf) => {
           if (typeof oneOf === "boolean") return null;
 
+          // Use title as key since it should be unique, fallback to JSON string if needed
+          const key = oneOf?.title || JSON.stringify(oneOf);
+
           return (
-            <option
-              id={oneOf?.title}
-              value={oneOf?.title}
-              // eslint-disable-next-line react-x/no-array-index-key -- Schema items may have duplicate titles
-              key={`${oneOf?.title}-${index}`}
-            >
+            <option id={oneOf?.title} value={oneOf?.title} key={key}>
               {oneOf?.title}
             </option>
           );

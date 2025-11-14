@@ -1,7 +1,7 @@
 // https://jsonforms.io/api/core/interfaces/jsonschema7.html
 import type { JSONSchema7, JSONSchema7Definition } from "json-schema";
-import type { DereferencedSchemaType } from "../types/types";
-import type { ScValPrimitiveType } from "../types/types";
+import type { DereferencedSchemaType } from "@/debug/types/types";
+import type { ScValPrimitiveType } from "@/debug/types/types";
 
 const resolveNestedSchema = (
   schema: unknown,

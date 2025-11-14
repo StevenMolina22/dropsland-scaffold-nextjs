@@ -5,10 +5,10 @@ import type { JSONSchema7 } from "json-schema";
 
 import { jsonSchema } from "../util/jsonSchema";
 
-import { Box } from "../../components/layout/Box";
+import { Box } from "@/components/layout/Box";
 import { LabelHeading } from "./LabelHeading";
 
-import { AnyObject, JsonSchemaFormProps } from "../types/types";
+import { AnyObject, JsonSchemaFormProps } from "@/debug/types/types";
 
 import { renderPrimitivesType } from "./RenderPrimitivesType";
 import { renderArrayType } from "./RenderArrayType";

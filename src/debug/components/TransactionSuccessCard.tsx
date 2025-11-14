@@ -1,7 +1,7 @@
-import { Box } from "../../components/layout/Box";
+import { Box } from "@/components/layout/Box";
 import { TxResponse } from "./TxResponse";
 import { ValidationResponseCard } from "./ValidationResponseCard";
-import { SubmitRpcResponse } from "../types/types";
+import { SubmitRpcResponse } from "@/debug/types/types";
 
 import { XdrJsonViewer } from "./XdrJsonViewer";
 import { Alert } from "@stellar/design-system";

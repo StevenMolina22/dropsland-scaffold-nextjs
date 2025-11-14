@@ -1,15 +1,14 @@
-import React, { useState, useTransition } from "react";
-import { useNotification } from "../hooks/useNotification.ts";
-import { useWallet } from "../hooks/useWallet.ts";
-import { Button, Tooltip } from "@stellar/design-system";
-import { getFriendbotUrl } from "../util/friendbot";
-import { useWalletBalance } from "../hooks/useWalletBalance.ts";
+import React, { useTransition } from "react";
+import { useWallet } from "@/hooks/useWallet.ts";
+import { getFriendbotUrl } from "@/util/friendbot";
+import { useWalletBalance } from "@/hooks/useWalletBalance.ts";
+import { Button } from "./ui/button.tsx";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip.tsx";
+import { toast } from "sonner";
 
 const FundAccountButton: React.FC = () => {
-  const { addNotification } = useNotification();
   const [isPending, startTransition] = useTransition();
   const { isFunded, isLoading } = useWalletBalance();
-  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const { address } = useWallet();
 
   if (!address) return null;
@@ -20,7 +19,7 @@ const FundAccountButton: React.FC = () => {
         const response = await fetch(getFriendbotUrl(address));
 
         if (response.ok) {
-          addNotification("Account funded successfully!", "success");
+          toast.success("Account funded successfully!");
         } else {
           const body: unknown = await response.json();
           if (
@@ -29,45 +28,35 @@ const FundAccountButton: React.FC = () => {
             "detail" in body &&
             typeof body.detail === "string"
           ) {
-            addNotification(`Error funding account: ${body.detail}`, "error");
+            toast.error(`Error funding account: ${body.detail}`);
           } else {
-            addNotification("Error funding account: Unknown error", "error");
+            toast.error("Error funding account: Unknown error");
           }
         }
       } catch {
-        addNotification("Error funding account. Please try again.", "error");
+        toast.error("Error funding account. Please try again.");
       }
     });
   };
 
   return (
-    <div
-      onMouseEnter={() => setIsTooltipVisible(true)}
-      onMouseLeave={() => setIsTooltipVisible(false)}
-    >
-      <Tooltip
-        isVisible={isTooltipVisible}
-        isContrast
-        title="Fund Account"
-        placement="bottom"
-        triggerEl={
-          <Button
-            disabled={isPending || isLoading || isFunded}
-            onClick={handleFundAccount}
-            variant="primary"
-            size="md"
-          >
-            Fund Account
-          </Button>
-        }
-      >
-        <div style={{ width: "13em" }}>
-          {isFunded
-            ? "Account is already funded"
-            : "Fund your account using the Stellar Friendbot"}
-        </div>
-      </Tooltip>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          disabled={isPending || isLoading || isFunded}
+          onClick={handleFundAccount}
+          variant="default"
+          size="sm"
+        >
+          Fund Account
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        {isFunded
+          ? "Account is already funded"
+          : "Fund your account using the Stellar Friendbot"}
+      </TooltipContent>
+    </Tooltip>
   );
 };
 

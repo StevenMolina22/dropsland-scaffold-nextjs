@@ -5,14 +5,14 @@ import { get } from "lodash";
 
 import { jsonSchema } from "../util/jsonSchema";
 
-import { Box } from "../../components/layout/Box";
+import { Box } from "@/components/layout/Box";
 import { LabelHeading } from "./LabelHeading";
 
 import type {
   AnyObject,
   JsonSchemaFormProps,
   SorobanInvokeValue,
-} from "../types/types";
+} from "@/debug/types/types";
 import { arrayItem } from "../util/arrayItem";
 
 export const renderArrayType = ({

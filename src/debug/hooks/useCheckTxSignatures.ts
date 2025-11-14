@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchTxSignatures } from "../util/fetchTxSignatures";
-import { NetworkHeaders } from "../types/types";
+import { NetworkHeaders } from "@/debug/types/types";
 
 export const useCheckTxSignatures = ({
   xdr,

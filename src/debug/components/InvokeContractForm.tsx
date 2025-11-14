@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useEffect, useRef, useState } from "react";
@@ -14,13 +13,13 @@ import {
 } from "@stellar/design-system";
 import { BASE_FEE, contract } from "@stellar/stellar-sdk";
 import { JSONSchema7 } from "json-schema";
-import { Box } from "../../components/layout/Box";
-import { useAccountSequenceNumber } from "../hooks/useAccountSequenceNumber";
-import { useRpcPrepareTx } from "../hooks/useRpcPrepareTx";
-import { useSimulateTx } from "../hooks/useSimulateTx";
-import { useSubmitRpcTx } from "../hooks/useSubmitRpcTx";
-import { isEmptyObject } from "../util/isEmptyObject";
-import { dereferenceSchema } from "../util/dereferenceSchema";
+import { Box } from "@/components/layout/Box";
+import { useAccountSequenceNumber } from "@/debug/hooks/useAccountSequenceNumber";
+import { useRpcPrepareTx } from "@/debug/hooks/useRpcPrepareTx";
+import { useSimulateTx } from "@/debug/hooks/useSimulateTx";
+import { useSubmitRpcTx } from "@/debug/hooks/useSubmitRpcTx";
+import { isEmptyObject } from "@/debug/util/isEmptyObject";
+import { dereferenceSchema } from "@/debug/util/dereferenceSchema";
 import { getNetworkHeaders } from "../util/getNetworkHeaders";
 import { getTxnToSimulate } from "../util/sorobanUtils";
 import {
@@ -28,7 +27,7 @@ import {
   SorobanInvokeValue,
   TransactionBuildParams,
   DereferencedSchemaType,
-} from "../types/types";
+} from "@/debug/types/types";
 import { useWallet } from "../../hooks/useWallet";
 import { ErrorText } from "./ErrorText";
 import { PrettyJsonTransaction } from "./PrettyJsonTransaction";

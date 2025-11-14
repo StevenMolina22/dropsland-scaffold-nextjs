@@ -5,11 +5,11 @@ import { PrettyJson } from "./PrettyJson";
 import { signatureHint } from "../util/signatureHint";
 import { xdrUtils } from "../util/xdrUtils";
 import { formatAmount } from "../util/formatAmount";
-import { getNetworkHeaders } from "../util/getNetworkHeaders";
+import { getNetworkHeaders } from "@/debug/util/getNetworkHeaders";
 
-import { useCheckTxSignatures } from "../hooks/useCheckTxSignatures";
+import { useCheckTxSignatures } from "@/debug/hooks/useCheckTxSignatures";
 
-import { AnyObject } from "../types/types";
+import { AnyObject } from "@/debug/types/types";
 import { network } from "../../contracts/util";
 
 type PrettyJsonTransactionProps = {
@@ -53,7 +53,9 @@ export const PrettyJsonTransaction = ({
     if (data && parentKey === "signatures" && key === "signature") {
       const match =
         typeof item === "string"
-          ? data.find((s) => s.sig.equals(Buffer.from(item, "hex")))
+          ? data.find((s: { sig: Buffer }) =>
+              s.sig.equals(Buffer.from(item, "hex")),
+            )
           : undefined;
 
       if (match) {

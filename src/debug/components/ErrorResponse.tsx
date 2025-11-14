@@ -3,7 +3,7 @@ import {
   BadResponseError,
 } from "@stellar/stellar-sdk";
 
-import { Box } from "../../components/layout/Box";
+import { Box } from "@/components/layout/Box";
 import { TxResponse } from "./TxResponse";
 import { ValidationResponseCard } from "./ValidationResponseCard";
 import { PrettyJson } from "./PrettyJson";
@@ -12,7 +12,7 @@ import {
   SubmitHorizonError,
   SubmitRpcError,
   SubmitRpcErrorStatus,
-} from "../types/types";
+} from "@/debug/types/types";
 import { Alert } from "@stellar/design-system";
 
 export const HorizonErrorResponse = ({

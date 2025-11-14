@@ -1,5 +1,5 @@
 import { isEmptyObject } from "./isEmptyObject";
-import { AnyObject } from "../types/types";
+import { AnyObject } from "@/debug/types/types";
 
 export const sanitizeObject = <T extends AnyObject>(
   obj: T,
