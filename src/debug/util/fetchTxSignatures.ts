@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { NetworkHeaders } from "../types/types";
+import { NetworkHeaders } from "@/debug/types/types";
 import {
   FeeBumpTransaction,
   hash,

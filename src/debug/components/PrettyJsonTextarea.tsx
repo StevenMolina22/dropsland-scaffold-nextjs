@@ -1,7 +1,7 @@
 import { PrettyJson } from "./PrettyJson";
-import { Box } from "../../components/layout/Box";
+import { Box } from "@/components/layout/Box";
 import { LabelHeading } from "./LabelHeading";
-import { AnyObject } from "../types/types";
+import { AnyObject } from "@/debug/types/types";
 
 const styles = {
   jsonContainer: {

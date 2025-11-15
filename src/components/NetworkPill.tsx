@@ -1,7 +1,7 @@
 import React from "react";
-import { Icon } from "@stellar/design-system";
-import { useWallet } from "../hooks/useWallet";
+import { useWallet } from "@/hooks/useWallet";
 import { stellarNetwork } from "../contracts/util";
+import { cn } from "@/lib/utils";
 
 // Format network name with first letter capitalized
 const formatNetworkName = (name: string) =>
@@ -12,9 +12,6 @@ const formatNetworkName = (name: string) =>
 
 const appNetwork = formatNetworkName(stellarNetwork);
 
-const bgColor = "#F0F2F5";
-const textColor = "#4A5362";
-
 const NetworkPill: React.FC = () => {
   const { network, address } = useWallet();
 
@@ -23,33 +20,38 @@ const NetworkPill: React.FC = () => {
   const isNetworkMismatch = walletNetwork !== appNetwork;
 
   let title = "";
-  let color = "#2ED06E";
+  let status: "neutral" | "error" | "success" = "neutral";
+
   if (!address) {
     title = "Connect your wallet using this network.";
-    color = "#C1C7D0";
   } else if (isNetworkMismatch) {
     title = `Wallet is on ${walletNetwork}, connect to ${appNetwork} instead.`;
-    color = "#FF3B30";
+    status = "error";
+  } else {
+    status = "success";
   }
 
   return (
     <div
-      style={{
-        backgroundColor: bgColor,
-        color: textColor,
-        padding: "4px 10px",
-        borderRadius: "16px",
-        fontSize: "12px",
-        fontWeight: "bold",
-        display: "flex",
-        alignItems: "center",
-        gap: "4px",
-        cursor: isNetworkMismatch ? "help" : "default",
-      }}
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition",
+        status === "success" &&
+          "border-emerald-400/40 bg-emerald-400/10 text-emerald-200",
+        status === "error" && "border-red-400/40 bg-red-500/10 text-red-200",
+        status === "neutral" &&
+          "border-border/60 bg-background/50 text-muted-foreground",
+      )}
       title={title}
     >
-      <Icon.Circle color={color} />
-      {appNetwork}
+      <span
+        className={cn(
+          "size-2.5 rounded-full",
+          status === "success" && "bg-emerald-400",
+          status === "error" && "bg-red-400",
+          status === "neutral" && "bg-muted-foreground/70",
+        )}
+      />
+      <span>{appNetwork}</span>
     </div>
   );
 };

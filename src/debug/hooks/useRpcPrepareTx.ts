@@ -7,7 +7,7 @@ import {
   NetworkHeaders,
   PrepareRpcErrorResponse,
   PrepareRpcResponse,
-} from "../types/types";
+} from "@/debug/types/types";
 
 type PrepareRpcTxProps = {
   rpcUrl: string;

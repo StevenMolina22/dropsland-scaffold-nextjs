@@ -15,7 +15,7 @@ const envSchema = z.object({
   PUBLIC_STELLAR_HORIZON_URL: z.string(),
 });
 
-const parsed = envSchema.safeParse(import.meta.env);
+const parsed = envSchema.safeParse(process.env);
 
 const env: z.infer<typeof envSchema> = parsed.success
   ? parsed.data

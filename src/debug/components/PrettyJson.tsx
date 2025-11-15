@@ -4,7 +4,7 @@ import { Icon, Link, Loader } from "@stellar/design-system";
 
 import { isEmptyObject } from "../util/isEmptyObject";
 
-import { AnyObject } from "../types/types";
+import { AnyObject } from "@/debug/types/types";
 
 export type CustomKeyValueLinkMap = {
   [key: string]: {
@@ -267,6 +267,47 @@ export const PrettyJson = ({
                     );
                   }
 
+                  // Generate a stable content-based key for array items (without using array index)
+                  // Uses content hash combined with parent path to ensure uniqueness
+                  const createContentHash = (item: unknown): string => {
+                    try {
+                      const str = JSON.stringify(item);
+                      // Create a hash from the string content
+                      let hash = 0;
+                      for (let i = 0; i < str.length; i++) {
+                        const char = str.charCodeAt(i);
+                        hash = (hash << 5) - hash + char;
+                        hash = hash & hash; // Convert to 32bit integer
+                      }
+                      return `hash-${Math.abs(hash)}`;
+                    } catch {
+                      // Fallback for items that can't be stringified
+                      const str = String(item);
+                      let hash = 0;
+                      for (let i = 0; i < str.length; i++) {
+                        const char = str.charCodeAt(i);
+                        hash = (hash << 5) - hash + char;
+                        hash = hash & hash;
+                      }
+                      return `str-${Math.abs(hash)}`;
+                    }
+                  };
+
+                  // Track seen content hashes to handle duplicates within the same array
+                  const seenHashes = new Set<string>();
+                  const getUniqueKey = (item: unknown): string => {
+                    const baseHash = createContentHash(item);
+                    let uniqueHash = baseHash;
+                    let suffix = 0;
+                    // Ensure uniqueness by appending suffix if hash was seen before
+                    while (seenHashes.has(uniqueHash)) {
+                      suffix++;
+                      uniqueHash = `${baseHash}-dup-${suffix}`;
+                    }
+                    seenHashes.add(uniqueHash);
+                    return uniqueHash;
+                  };
+
                   return (
                     <Collapsible
                       key={keyProp}
@@ -274,15 +315,23 @@ export const PrettyJson = ({
                       itemList={value}
                       char="["
                     >
-                      {value.map((v, index) => {
+                      {value.map((v) => {
+                        const contentHash = getUniqueKey(v);
+                        // Combine parent key path with content hash for stable, unique keys
+                        let itemKey: string;
+                        if (v === null) {
+                          itemKey = `${keyProp}-null-${contentHash}`;
+                        } else if (typeof v === "object") {
+                          itemKey = `${keyProp}-obj-${contentHash}`;
+                        } else {
+                          // For primitives, combine value with hash
+                          const valueStr = String(v);
+                          itemKey = `${keyProp}-val-${valueStr}-${contentHash}`;
+                        }
                         if (typeof v === "object") {
                           if (v === null) {
                             return (
-                              <div
-                                // eslint-disable-next-line react-x/no-array-index-key -- No stable ID available for JSON values
-                                key={`${keyProp}-${index}`}
-                                style={styles.nested}
-                              >
+                              <div key={itemKey} style={styles.nested}>
                                 <Value>
                                   null
                                   <Comma />
@@ -294,8 +343,7 @@ export const PrettyJson = ({
                           if (Array.isArray(v)) {
                             return (
                               <Collapsible
-                                // eslint-disable-next-line react-x/no-array-index-key -- No stable ID available for JSON values
-                                key={`${keyProp}-${index}`}
+                                key={itemKey}
                                 itemList={Object.keys(v)}
                                 char="["
                               >
@@ -307,8 +355,7 @@ export const PrettyJson = ({
                           }
                           return (
                             <Collapsible
-                              // eslint-disable-next-line react-x/no-array-index-key -- No stable ID available for JSON values
-                              key={`${keyProp}-${index}`}
+                              key={itemKey}
                               itemList={Object.keys(v as AnyObject)}
                               char="{"
                             >
@@ -317,7 +364,11 @@ export const PrettyJson = ({
                           );
                         }
 
-                        return render(v, key);
+                        return (
+                          <React.Fragment key={itemKey}>
+                            {render(v, key)}
+                          </React.Fragment>
+                        );
                       })}
                     </Collapsible>
                   );

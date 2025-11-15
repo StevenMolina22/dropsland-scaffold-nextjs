@@ -8,7 +8,7 @@ import {
   NetworkHeaders,
   SubmitRpcError,
   SubmitRpcResponse,
-} from "../types/types";
+} from "@/debug/types/types";
 
 type SubmitRpcTxProps = {
   rpcUrl: string;

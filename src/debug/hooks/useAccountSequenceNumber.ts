@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { MuxedAccount, StrKey } from "@stellar/stellar-sdk";
 import { useQuery } from "@tanstack/react-query";
-import { NetworkHeaders } from "../types/types";
+import { NetworkHeaders } from "@/debug/types/types";
 
 export const useAccountSequenceNumber = ({
   publicKey,

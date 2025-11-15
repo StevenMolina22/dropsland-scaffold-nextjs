@@ -1,0 +1,11 @@
+// Stellar
+export const STELLAR_NETWORK = process.env.NEXT_PUBLIC_STELLAR_NETWORK;
+export const STELLAR_NETWORK_PASSPHRASE =
+  process.env.NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE;
+export const STELLAR_RPC_URL = process.env.NEXT_PUBLIC_STELLAR_RPC_URL;
+export const STELLAR_HORIZON_URL = process.env.NEXT_PUBLIC_STELLAR_HORIZON_URL;
+
+// Supabase
+export const PUBLIC_SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
+export const PUBLIC_SUPABASE_ANON_KEY = process.env.PUBLIC_SUPABASE_ANON_KEY;
+export const PUBLIC_API_BASE_URL = process.env.PUBLIC_API_BASE_URL;

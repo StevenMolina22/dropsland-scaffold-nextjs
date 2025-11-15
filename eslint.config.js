@@ -5,6 +5,7 @@ import tseslint from "typescript-eslint";
 import nextPlugin from "@next/eslint-plugin-next";
 import prettier from "eslint-config-prettier";
 import { globalIgnores } from "eslint/config";
+import reactDom from "eslint-plugin-react-dom";
 
 export default tseslint.config(
   // 1. Files to ignore
@@ -15,6 +16,8 @@ export default tseslint.config(
     "!src/contracts/util.ts",
     ".next",
     "next-env.d.ts",
+    "target",
+    "supabase/**/*",
   ]),
 
   // 2. Base JS rules for all files
@@ -30,10 +33,12 @@ export default tseslint.config(
     ],
     plugins: {
       "@next/next": nextPlugin,
+      "react-dom": reactDom,
     },
     rules: {
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
+      ...reactDom.configs.recommended.rules,
     },
     languageOptions: {
       globals: { ...globals.browser },

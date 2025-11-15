@@ -24,8 +24,8 @@ import {
   SorobanInvokeValue,
   SorobanOpType,
   TxnOperation,
-} from "../types/types";
-import { TransactionBuildParams } from "../types/types";
+} from "@/debug/types/types";
+import { TransactionBuildParams } from "@/debug/types/types";
 
 export const isSorobanOperationType = (operationType: string) =>
   [

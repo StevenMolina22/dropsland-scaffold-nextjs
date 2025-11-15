@@ -1,5 +1,5 @@
 import { parse, isNumber } from "lossless-json";
-import { AnyObject } from "../types/types";
+import { AnyObject } from "@/debug/types/types";
 
 export const parseToLosslessJson = (stringObj: string) => {
   return parse(stringObj, null, (value) => {
